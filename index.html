@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moss-games苔猫网游戏中心 1.2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(124, 58, 237, 0.5);
+        }
+        
+        .game-icon {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-info {
+            padding: 25px;
+        }
+        
+        .game-title {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: #fff;
+            text-align: center;
+        }
+        
+        .game-description {
+            color: #b0b0d0;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+            height: 60px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .game-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .play-btn {
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+        }
+        
+        .play-btn:hover {
+            background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%);
+            transform: scale(1.05);
+        }
+        
+        .new-tab-btn {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .new-tab-btn:hover {
+            background: linear-gradient(90deg, #059669 0%, #047857 100%);
+            transform: scale(1.05);
+        }
+        
+        .open-btn {
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .open-btn:hover {
+            background: linear-gradient(90deg, #1d4ed8 0%, #1e40af 100%);
+            transform: scale(1.05);
+        }
+        
+        .game-frame {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .frame-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .frame-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(30, 30, 46, 0.9);
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 0;
+        }
+        
+        .frame-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .frame-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .frame-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .frame-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .close-btn {
+            background: #ef4444;
+        }
+        
+        .close-btn:hover {
+            background: #dc2626;
+        }
+        
+        .frame-content {
+            width: 100%;
+            height: calc(100% - 70px);
+            background: white;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #8888aa;
+            font-size: 0.9rem;
+            width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .game-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .game-icon {
+                height: 180px;
+                font-size: 4rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gamepad"></i> 游戏中心</h1>
+            <p class="subtitle">点击任意游戏开始游玩，支持页面内访问或新标签页打开两种模式</p>
+        </header>
+        
+        <div class="game-grid" id="gameGrid">
+            <!-- 游戏卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <footer>
+            <p>© 2026 游戏中心 | 四款精选HTML游戏，支持双模式访问</p>
+        </footer>
+    </div>
+    
+    <!-- 游戏内嵌框架 -->
+    <div class="game-frame" id="gameFrame">
+        <div class="frame-container">
+            <div class="frame-header">
+                <div class="frame-title" id="frameTitle">游戏加载中...</div>
+                <div class="frame-controls">
+                    <button class="frame-btn" id="refreshBtn" title="刷新"><i class="fas fa-redo"></i></button>
+                    <button class="frame-btn" id="fullscreenBtn" title="全屏"><i class="fas fa-expand"></i></button>
+                    <button class="frame-btn close-btn" id="closeBtn" title="关闭"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="frame-content">
+                <div class="loading" id="loadingText">游戏加载中...</div>
+                <iframe id="gameIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 游戏数据
+        const games = [
+            {
+                id: 1,
+                title: "2048",
+                description: "经典的数字合并游戏，滑动相同数字合并，尝试得到2048方块。",
+                icon: "fas fa-th",
+                color: "#8b5cf6",
+                file: "https://moss-cat.github.io/Moss-games.2048/"
+            },
+            {
+                id: 2,
+                title: "贪吃蛇",
+                description: "控制蛇吃食物变长，避免撞墙或自己，经典怀旧游戏。",
+                icon: "fas fa-otter",
+                color: "#10b981",
+                file: "https://moss-cat.github.io/Moss-games.snakes/"
+            },
+            {
+                id: 3,
+                title: "塔防游戏",
+                description: "放置防御塔阻止敌人前进，策略性十足的塔防游戏。",
+                icon: "fas fa-tower-observation",
+                color: "#ef4444",
+                file: "https://moss-cat.github.io/Moss-games.towerdefence/"
+            },
+            {
+                id: 4,
+                title: "星空大战",
+                description: "太空射击游戏，驾驶飞船在星际间战斗，击碎所有陨石。",
+                icon: "fas fa-rocket",
+                color: "#f59e0b",
+                file: "https://moss-cat.github.io/Moss-games.asteroids/"
+            },
+            {
+                id: 5,
+                title: "Other Web",
+                description: "进入OSS网玩更多小游戏。",
+                icon: "fas fa-globe",
+                color: "#3b82f6",
+                file: "https://alan11120967.github.io/GameHub/"
+            }
+        ];
+        
+        // DOM元素
+        const gameGrid = document.getElementById('gameGrid');
+        const gameFrame = document.getElementById('gameFrame');
+        const gameIframe = document.getElementById('gameIframe');
+        const frameTitle = document.getElementById('frameTitle');
+        const loadingText = document.getElementById('loadingText');
+        const closeBtn = document.getElementById('closeBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        
+        // 当前打开的游戏
+        let currentGame = null;
+        
+        // 渲染游戏卡片
+        function renderGames() {
+            gameGrid.innerHTML = '';
+            
+            games.forEach(game => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                
+                // 为Other Web特殊处理，只有一个按钮
+                if (game.id === 5) {
+                    gameCard.innerHTML = `
+                        <div class="game-icon" style="color: ${game.color}">
+                            <i class="${game.icon}"></i>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">${game.title}</h3>
+                            <p class="game-description">${game.description}</p>
+                            <button class="game-btn open-btn" data-id="${game.id}">
+                                <i class="fas fa-external-link-alt"></i> 打开
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // 其他游戏有两个按钮
+                    gameCard.innerHTML = `
+                        <div class="game-icon" style="color: ${game.color}">
+                            <i class="${game.icon}"></i>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">${game.title}</h3>
+                            <p class="game-description">${game.description}</p>
+                            <div class="button-group">
+                                <button class="game-btn play-btn" data-id="${game.id}" data-mode="embed">
+                                    <i class="fas fa-play"></i> 页面内玩
+                                </button>
+                                <button class="game-btn new-tab-btn" data-id="${game.id}" data-mode="newtab">
+                                    <i class="fas fa-external-link-alt"></i> 新标签页
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                gameGrid.appendChild(gameCard);
+            });
+            
+            // 为游戏按钮添加事件监听
+            document.querySelectorAll('.game-btn[data-id]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const gameId = parseInt(this.getAttribute('data-id'));
+                    const game = games.find(g => g.id === gameId);
+                    
+                    if (game) {
+                        if (gameId === 5) {
+                            // Other Web只有打开功能，直接在新标签页打开
+                            window.open(game.file, '_blank');
+                        } else {
+                            const mode = this.getAttribute('data-mode');
+                            if (mode === 'embed') {
+                                openGameInFrame(game);
+                            } else {
+                                window.open(game.file, '_blank');
+                            }
+                        }
+                    }
+                });
+            });
+        }
+        
+        // 在框架内打开游戏
+        function openGameInFrame(game) {
+            currentGame = game;
+            gameFrame.style.display = 'block';
+            frameTitle.textContent = `正在玩: ${game.title}`;
+            loadingText.style.display = 'block';
+            
+            // 设置iframe的src
+            gameIframe.src = game.file;
+            
+            // 添加iframe加载完成事件
+            gameIframe.onload = function() {
+                loadingText.style.display = 'none';
+            };
+            
+            // 添加加载错误处理
+            gameIframe.onerror = function() {
+                loadingText.innerHTML = `
+                    <div style="text-align: center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px; color: #fbbf24;"></i>
+                        <h3>游戏加载失败</h3>
+                        <p>无法加载: ${game.file}</p>
+                        <p style="margin-top: 20px; font-size: 0.9rem;">
+                            请确保游戏文件存在，或尝试在新标签页中打开。
+                        </p>
+                        <button onclick="window.open('${game.file}', '_blank')" style="margin-top: 20px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            <i class="fas fa-external-link-alt"></i> 在新标签页中打开
+                        </button>
+                    </div>
+                `;
+            };
+        }
+        
+        // 关闭游戏框架
+        function closeGameFrame() {
+            gameFrame.style.display = 'none';
+            gameIframe.src = '';
+            loadingText.style.display = 'block';
+            loadingText.innerHTML = '游戏加载中...';
+            currentGame = null;
+        }
+        
+        // 刷新当前游戏
+        function refreshGame() {
+            if (currentGame && gameIframe.src) {
+                gameIframe.src = gameIframe.src;
+                loadingText.style.display = 'block';
+            }
+        }
+        
+        // 切换全屏模式
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`全屏请求失败: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderGames();
+            
+            // 事件监听
+            closeBtn.addEventListener('click', closeGameFrame);
+            refreshBtn.addEventListener('click', refreshGame);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            // 点击框架外部关闭
+            gameFrame.addEventListener('click', function(e) {
+                if (e.target === gameFrame) {
+                    closeGameFrame();
+                }
+            });
+            
+            // 键盘事件：按ESC键关闭游戏框架
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && gameFrame.style.display === 'block') {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        closeGameFrame();
+                    }
+                }
+            });
+            
+            // 全屏变化事件
+            document.addEventListener('fullscreenchange', function() {
+                if (document.fullscreenElement) {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                    fullscreenBtn.title = '退出全屏';
+                } else {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                    fullscreenBtn.title = '全屏';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
